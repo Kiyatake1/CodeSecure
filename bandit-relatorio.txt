@@ -1,0 +1,441 @@
+Run started:2023-11-27 20:33:01.447592
+
+
+
+Test results:
+
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_imports.html#b404-import-subprocess
+
+   Location: ./cs.py:1:0
+
+1	import subprocess
+
+2	import os
+
+3	import git
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:6:4
+
+5	def install_security_tools():
+
+6	    subprocess.run(['pip', 'install', 'bandit', 'safety', 'pyre-check'])
+
+7	
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:6:4
+
+5	def install_security_tools():
+
+6	    subprocess.run(['pip', 'install', 'bandit', 'safety', 'pyre-check'])
+
+7	
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:11:20
+
+10	    
+
+11	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+12	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:11:20
+
+10	    
+
+11	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+12	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:12:18
+
+11	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+12	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+13	    
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:12:18
+
+11	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+12	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+13	    
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:23:20
+
+22	    
+
+23	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+24	    
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:23:20
+
+22	    
+
+23	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+24	    
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:27:34
+
+26	    if os.path.exists(dependency_check_script):
+
+27	        dependency_check_result = subprocess.run([dependency_check_script, "--project", "."], capture_output=True, text=True)
+
+28	        with open("safety_report.txt", "w") as file:
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:46:20
+
+45	    os.chdir(local_path)
+
+46	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+47	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:46:20
+
+45	    os.chdir(local_path)
+
+46	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+47	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:47:18
+
+46	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+47	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+48	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:47:18
+
+46	    bandit_result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+
+47	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+48	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:48:20
+
+47	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+48	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+49	    dependency_check_result = subprocess.run(["dependency-check", "--project", "."], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:48:20
+
+47	    pyre_result = subprocess.run(["pyre", "--source-directory", "."], capture_output=True, text=True)
+
+48	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+49	    dependency_check_result = subprocess.run(["dependency-check", "--project", "."], capture_output=True, text=True)
+
+
+
+--------------------------------------------------
+
+>> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b607_start_process_with_partial_path.html
+
+   Location: ./cs.py:49:30
+
+48	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+49	    dependency_check_result = subprocess.run(["dependency-check", "--project", "."], capture_output=True, text=True)
+
+50	    
+
+
+
+--------------------------------------------------
+
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+
+   Severity: Low   Confidence: High
+
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html
+
+   Location: ./cs.py:49:30
+
+48	    safety_result = subprocess.run(["safety", "check", "--full-report"], capture_output=True, text=True)
+
+49	    dependency_check_result = subprocess.run(["dependency-check", "--project", "."], capture_output=True, text=True)
+
+50	    
+
+
+
+--------------------------------------------------
+
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+
+   Severity: Medium   Confidence: Low
+
+   CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b608_hardcoded_sql_expressions.html
+
+   Location: ./dvpwa/sqli/dao/student.py:42:13
+
+41	    async def create(conn: Connection, name: str):
+
+42	        q = ("INSERT INTO students (name) "
+
+43	             "VALUES ('%(name)s')" % {'name': name})
+
+44	        async with conn.cursor() as cur:
+
+
+
+--------------------------------------------------
+
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+
+   Severity: High   Confidence: High
+
+   CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
+
+   More Info: https://bandit.readthedocs.io/en/1.7.5/plugins/b324_hashlib.html
+
+   Location: ./dvpwa/sqli/dao/user.py:41:32
+
+40	    def check_password(self, password: str):
+
+41	        return self.pwd_hash == md5(password.encode('utf-8')).hexdigest()
+
+
+
+--------------------------------------------------
+
+
+
+Code scanned:
+
+	Total lines of code: 599
+
+	Total lines skipped (#nosec): 0
+
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+
+
+Run metrics:
+
+	Total issues (by severity):
+
+		Undefined: 0
+
+		Low: 18
+
+		Medium: 1
+
+		High: 1
+
+	Total issues (by confidence):
+
+		Undefined: 0
+
+		Low: 1
+
+		Medium: 0
+
+		High: 19
+
+Files skipped (0):
