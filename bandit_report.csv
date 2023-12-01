@@ -1,0 +1,20 @@
+test_id,filename,line_number,issue_severity,issue_confidence,issue_text
+B404,./cs.py,3,LOW,HIGH,Consider possible security implications associated with the subprocess module.
+B607,./cs.py,10,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,10,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,11,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,11,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,12,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,12,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,95,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,95,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,99,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,99,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,103,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,103,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,107,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,107,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B607,./cs.py,108,LOW,HIGH,Starting a process with a partial executable path
+B603,./cs.py,108,LOW,HIGH,subprocess call - check for execution of untrusted input.
+B608,./dvpwa/sqli/dao/student.py,42,MEDIUM,LOW,Possible SQL injection vector through string-based query construction.
+B324,./dvpwa/sqli/dao/user.py,41,HIGH,HIGH,Use of weak MD5 hash for security. Consider usedforsecurity=False
