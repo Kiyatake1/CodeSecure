@@ -1,6 +1,0 @@
-check_id,path,start,end,lines,message
-yaml.docker-compose.security.no-new-privileges.no-new-privileges,dvpwa/docker-compose.yml,130,135,,
-yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service,dvpwa/docker-compose.yml,130,135,,
-python.lang.security.audit.formatted-sql-query.formatted-sql-query,dvpwa/sqli/dao/student.py,1377,1391,,
-python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query,dvpwa/sqli/dao/student.py,1377,1391,,
-python.lang.security.audit.md5-used-as-password.md5-used-as-password,dvpwa/sqli/dao/user.py,1198,1239,,

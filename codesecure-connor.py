@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-import subprocess, os, threading, json, csv, git
+import subprocess, os, threading, json, csv, git, shutil
 
 def install_security_tools_async():
     install_security_tools()
@@ -11,114 +11,27 @@ def install_security_tools():
     subprocess.run(['sudo', 'apt', 'install', 'npm'])
     subprocess.run(['sudo', 'npm', 'install', '-g', 'snyk'])
 
-#Função de Conversão para Bandit
-def convert_bandit_json_to_csv(bandit_json):
-    csv_filename = 'bandit_report.csv'
-    with open(csv_filename, 'w', newline='') as csvfile:
-        fieldnames = ['test_id', 'filename', 'line_number', 'issue_severity', 'issue_confidence', 'issue_text']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for result in bandit_json:
-            writer.writerow({
-                'test_id': result.get('test_id', ''),
-                'filename': result.get('filename', ''),
-                'line_number': result.get('line_number', ''),
-                'issue_severity': result.get('issue_severity', ''),
-                'issue_confidence': result.get('issue_confidence', ''),
-                'issue_text': result.get('issue_text', ''),
-            })
-
-# Função de conversão para Semgrep
-def convert_semgrep_json_to_csv(semgrep_json):
-    csv_filename = 'semgrep_report.csv'
-
-    with open(csv_filename, 'w', newline='') as csvfile:
-        fieldnames = ['check_id', 'path', 'start', 'end', 'lines', 'message']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for result in semgrep_json.get('results', []):
-            writer.writerow({
-                'check_id': result.get('check_id', ''),
-                'path': result.get('path', ''),
-                'start': result.get('start', {}).get('offset', ''),
-                'end': result.get('end', {}).get('offset', ''),
-                'lines': ', '.join(result.get('lines', [])),
-                'message': result.get('message', ''),
-            })
-            
-# Função de conversão para Safety
-def convert_safety_json_to_csv(safety_json):
-    csv_filename = 'safety_report.csv'
-
-    with open(csv_filename, 'w', newline='') as csvfile:
-        fieldnames = ['vulnerability_id', 'package', 'installed', 'affected', 'description', 'references']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-
-        vulnerabilities = safety_json.get('vulnerabilities', [])
-        for vulnerability in vulnerabilities:
-            writer.writerow({
-                'vulnerability_id': vulnerability.get('vulnerability_id', ''),
-                'package': vulnerability.get('package_name', ''),
-                'installed': vulnerability.get('analyzed_version', ''),
-                'affected': ', '.join(vulnerability.get('affected_versions', [])),
-                'description': vulnerability.get('advisory', ''),
-                'references': vulnerability.get('more_info_url', ''),
-            })
-
-# Função de conversão para Snyk
-def convert_snyk_json_to_csv(snyk_json_list):
-    csv_filename = 'snyk_report.csv'
-
-    with open(csv_filename, 'w', newline='') as csvfile:
-        fieldnames = ['projectName', 'packageName', 'version', 'severity', 'title', 'from', 'upgradePath']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for project in snyk_json_list:
-            for result in project.get('vulnerabilities', []):
-                writer.writerow({
-                    'projectName': project.get('projectName', ''),
-                    'packageName': result.get('packageName', ''),
-                    'version': result.get('version', ''),
-                    'severity': result.get('severity', ''),
-                    'title': result.get('title', ''),
-                    'from': result.get('from', ''),
-                    'upgradePath': ', '.join(result.get('upgradePath', [])),
-                })
-
 def scan_local(path, selected_sast_tools, selected_sca_tools):
     os.chdir(path)
     results = {}
     if "Bandit" in selected_sast_tools:
-        bandit_result = subprocess.run(["bandit", "-r", "--format", "json", "."], capture_output=True, text=True)
-        bandit_json = json.loads(bandit_result.stdout)
-        results['bandit'] = bandit_json['results']
+        bandit_result = subprocess.run(["bandit", "-r", "--format", "csv", "."], capture_output=True, text=True)
+        with open('bandit_results.csv', 'w') as csv_file:
+            csv_file.write(bandit_result.stdout)  # Salvando o resultado do Bandit diretamente como CSV
     if "Semgrep" in selected_sast_tools:
         semgrep_result = subprocess.run(["semgrep", "--json", "."], capture_output=True, text=True)
-        semgrep_json = json.loads(semgrep_result.stdout)
-        results['semgrep'] = semgrep_json
+        with open('semgrep_results.json', 'w') as json_file:
+            json_file.write(semgrep_result.stdout)  # Salvando o resultado do Semgrep em um arquivo JSON
     if "Safety" in selected_sca_tools:
         safety_result = subprocess.run(["safety", "check", "--output", "json"], capture_output=True, text=True)
-        safety_json = json.loads(safety_result.stdout)
-        results['safety'] = safety_json
+        with open('safety_results.json', 'w') as json_file:
+            json_file.write(safety_result.stdout)  # Salvando o resultado do Safety em um arquivo JSON
     if "Snyk" in selected_sca_tools:
         subprocess.run(['sudo', 'snyk', 'auth'])
         snyk_result = subprocess.run(['sudo',"snyk", "test", "--command=python3" "--all-projects", "--skip-unresolved", "--json"], capture_output=True, text=True)
-        snyk_json = json.loads(snyk_result.stdout)
-        results['snyk'] = snyk_json
-        print(results['snyk'])
-    for tool, result in results.items():
-        if tool == 'bandit':
-            convert_bandit_json_to_csv(result)
-        elif tool == 'semgrep':
-            convert_semgrep_json_to_csv(result)
-        elif tool == 'safety':
-            convert_safety_json_to_csv(result)
-        elif tool == 'snyk':
-            convert_snyk_json_to_csv(result)
-
+        with open('snyk_results.json', 'w') as json_file:
+            json_file.write(snyk_result.stdout)  # Salvando o resultado do Snyk em um arquivo JSON
+    
 def scan_github(repo_url, selected_sast_tools, selected_sca_tools):
     git.Repo.clone_from(repo_url, 'temp_folder')
     scan_local('temp_folder', selected_sast_tools, selected_sca_tools)
