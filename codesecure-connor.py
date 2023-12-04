@@ -2,6 +2,29 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import subprocess, os, threading, json, csv, git, shutil, pandas as pd, numpy
 
+def check_installed_tools():
+    installed_tools = []
+    required_tools = ["bandit", "safety", "semgrep", "npm", "snyk"]
+
+    for tool in required_tools:
+        try:
+            subprocess.run([tool, "--version"], capture_output=True, check=True)
+            installed_tools.append(tool)
+        except FileNotFoundError:
+            pass  # Se o comando não for encontrado, o subprocesso lançará um FileNotFoundError
+
+    return installed_tools
+
+def start_installation():
+    installed_tools = check_installed_tools()
+    required_tools = ["bandit", "safety", "semgrep", "npm", "snyk"]
+    missing_tools = [tool for tool in required_tools if tool not in installed_tools]
+
+    if not missing_tools:
+        messagebox.showinfo("Ferramentas Instaladas", "Todas as ferramentas necessárias já estão instaladas!")
+    else:
+        install_security_tools_async()
+
 def install_security_tools_async():
     install_security_tools()
     messagebox.showinfo("Instalação Concluída", "As ferramentas de segurança foram instaladas com sucesso!")
@@ -64,8 +87,8 @@ def extract_semgrep(n_arquivo:str):
 
 def sumariza():
     # Caminho dos Arquivos
-    Semgrep_file = "semgrep_results.json"
-    Bandit_file = "bandit_results.json"
+    Semgrep_file = "Analysis Report/semgrep_results.json"
+    Bandit_file = "Analysis Report/bandit_results.json"
 
     # Coletando os dados
     vuls_S, severitys_S, lista_cwe_S, lista_code_S, lista_arquivos_S, lista_linhas_S = [], [], [], [], [], []
@@ -103,41 +126,80 @@ def sumariza():
     df["Arquivo"] = arquivos
     df["Linhas"] = linhas
 
-    df.to_csv("sumarizado.csv")
+    # Salvar os resultados na pasta "relatórios"
+    report_folder = "Analysis Report"
+    os.makedirs(report_folder, exist_ok=True)  # Cria a pasta se ainda não existir
 
+    # Salvar a planilha sumarizada
+    sumarizado_path = os.path.join(report_folder, "sumarizado.csv")
+    df.to_csv(sumarizado_path)
+
+def clear_previous_analysis():
+    # Caminho dos Arquivos
+    semgrep_file = "Analysis Report/semgrep_results.json"
+    bandit_file = "Analysis Report/bandit_results.json"
+    safety_file = "Analysis Report/safety_results.json"
+    snyk_file = "Analysis Report/snyk_results.json"
+    sumarizado_file = "Analysis Report/sumarizado.csv"
+
+    # Verificar e excluir os arquivos, se existirem
+    if os.path.exists(semgrep_file):
+        os.remove(semgrep_file)
+    if os.path.exists(bandit_file):
+        os.remove(bandit_file)
+    if os.path.exists(safety_file):
+        os.remove(safety_file)
+    if os.path.exists(snyk_file):
+        os.remove(snyk_file)
+    if os.path.exists(sumarizado_file):
+        os.remove(sumarizado_file)
 
 def scan_local(path, selected_sast_tools, selected_sca_tools):
+    clear_previous_analysis()
     os.chdir(path)
+    print("Análise em andamento!")
     results = {}
+    # Salvar os resultados na pasta "Relatórios"
+    report_folder = "Analysis Report"
+    os.makedirs(report_folder, exist_ok=True)  # Cria a pasta se ainda não existir
     if "Bandit" in selected_sast_tools:
         bandit_result = subprocess.run(["bandit", "-r", "--format", "json", "."], capture_output=True, text=True)
-        with open('bandit_results.json', 'w') as csv_file:
-            csv_file.write(bandit_result.stdout)  # Salvando o resultado do Bandit diretamente como CSV
+        bandit_output_path = os.path.join(report_folder, 'bandit_results.json')
+        with open(bandit_output_path, 'w') as json_file:
+            json_file.write(bandit_result.stdout)  # Salvando o resultado do Bandit diretamente como JSON
+
     if "Semgrep" in selected_sast_tools:
         semgrep_result = subprocess.run(["semgrep", "--json", "."], capture_output=True, text=True)
-        with open('semgrep_results.json', 'w') as json_file:
-            json_file.write(semgrep_result.stdout)  # Salvando o resultado do Semgrep em um arquivo JSON
+        semgrep_output_path = os.path.join(report_folder, 'semgrep_results.json')
+        with open(semgrep_output_path, 'w') as json_file:
+            json_file.write(semgrep_result.stdout)  # Salvando o resultado do Semgrep diretamente como JSON
+
     if "Safety" in selected_sca_tools:
         safety_result = subprocess.run(["safety", "check", "--output", "json"], capture_output=True, text=True)
-        with open('safety_results.json', 'w') as json_file:
-            json_file.write(safety_result.stdout)  # Salvando o resultado do Safety em um arquivo JSON
+        safety_output_path = os.path.join(report_folder, 'safety_results.json')
+        with open(safety_output_path, 'w') as json_file:
+            json_file.write(safety_result.stdout)  # Salvando o resultado do Safety diretamente como JSON
+
     if "Snyk" in selected_sca_tools:
         subprocess.run(['sudo', 'snyk', 'auth'])
-        snyk_result = subprocess.run(['sudo',"snyk", "test", "--command=python3" "--all-projects", "--skip-unresolved", "--json"], capture_output=True, text=True)
-        with open('snyk_results.json', 'w') as json_file:
-            json_file.write(snyk_result.stdout)  # Salvando o resultado do Snyk em um arquivo JSON
+        snyk_result = subprocess.run(['sudo', "snyk", "test", "--command=python3", "--all-projects", "--skip-unresolved", "--json"], capture_output=True, text=True)
+        snyk_output_path = os.path.join(report_folder, 'snyk_results.json')
+        with open(snyk_output_path, 'w') as json_file:
+            json_file.write(snyk_result.stdout)  # Salvando o resultado do Snyk diretamente como JSON
     
 def scan_github(repo_url, selected_sast_tools, selected_sca_tools):
-    git.Repo.clone_from(repo_url, 'temp_folder')
-    scan_local('temp_folder', selected_sast_tools, selected_sca_tools)
-    shutil.rmtree('temp_folder')
+    repo_name = repo_url.split('/')[-1].split('.git')[0]  # Extrai o nome do repositório do URL
+    # Verificar se a pasta de destino já existe
+    if os.path.exists(repo_name):
+        try:
+            shutil.rmtree(repo_name)  # Remove o diretório existente e todos os seus arquivos
+        except Exception as e:
+            messagebox.showwarning("Erro ao Remover Pasta", f"Ocorreu um erro ao remover a pasta existente: {e}")
+            return
+    git.Repo.clone_from(repo_url, repo_name)  # Clona o repositório com o nome extraído
+    scan_local(repo_name, selected_sast_tools, selected_sca_tools)  # Executa a análise no repositório clonado
 
 def create_gui():
-    def start_installation():
-        if messagebox.askyesno("Instalar Ferramentas de Segurança", "Deseja instalar as ferramentas de segurança?"):
-            install_thread = threading.Thread(target=install_security_tools_async)
-            install_thread.start()
-
     root = tk.Tk()
     root.title("CodeSecure Connor")
     root.geometry("1200x400")
@@ -159,6 +221,7 @@ def create_gui():
     sast_frame.pack(side='left', padx=10, pady=5, fill='both', expand=True)
     sast_tools = ["Bandit", "Semgrep"]
     selected_sast_tools = []
+
     def select_sast_tool(tool):
         if tool in selected_sast_tools:
             selected_sast_tools.remove(tool)
@@ -171,6 +234,7 @@ def create_gui():
     sca_frame.pack(side='left', padx=10, pady=5, fill='both', expand=True)
     sca_tools = ["Safety", "Snyk"]
     selected_sca_tools = []
+    
     def select_sca_tool(tool):
         if tool in selected_sca_tools:
             selected_sca_tools.remove(tool)
@@ -179,16 +243,85 @@ def create_gui():
     for idx, tool in enumerate(sca_tools):
         checkbox = ttk.Checkbutton(sca_frame, text=tool, command=lambda t=tool: select_sca_tool(t))
         checkbox.pack(anchor=tk.W)
+    
+
     def scan_local_with_tools():
+        def perform_analysis(path):
+            scan_local(path, selected_sast_tools, selected_sca_tools)
+            sumariza()  # Chama a função para sumarizar após a verificação
+
+            # Fechar a janela de análise em andamento após a conclusão da análise
+            analysis_window.destroy()
+            messagebox.showinfo("Análise Concluída", "A análise foi concluída com sucesso!")
+
+        # Verificar se as ferramentas foram selecionadas
+        if not selected_sast_tools and not selected_sca_tools:
+            messagebox.showwarning("Ferramentas Não Selecionadas", "Por favor, selecione pelo menos uma ferramenta SAST ou SCA antes de iniciar a análise.")
+            return
+        else:
+            installed_tools = check_installed_tools()
+            required_tools = ["bandit", "safety", "semgrep", "npm", "snyk"]
+            missing_tools = [tool for tool in required_tools if tool not in installed_tools]
+
+            if missing_tools:
+                missing_tools_str = ", ".join(missing_tools)
+                messagebox.showwarning("Ferramentas Ausentes", f"As seguintes ferramentas estão ausentes: {missing_tools_str}. Por favor, instale-as primeiro.")
+                return
+
         path = filedialog.askdirectory()
-        scan_local(path, selected_sast_tools, selected_sca_tools)
-        sumariza()  # Chama a função para sumarizar após a verificação
-        messagebox.showinfo("Análise Concluída", "A análise foi concluída com sucesso!")
+        analysis_window = tk.Toplevel()  # Criar nova janela para exibir a mensagem de análise em andamento
+        analysis_window.title("Análise em Andamento")
+        analysis_label = ttk.Label(analysis_window, text="Análise em andamento...")
+        analysis_label.pack()
+
+        # Chamar a função de análise em segundo plano para não bloquear a interface principal
+        threading.Thread(target=perform_analysis, args=(path,)).start()
+
+
     def scan_github_with_tools():
-        repo_url = input("Digite a URL do repositório GitHub: ")
-        scan_github(repo_url, selected_sast_tools, selected_sca_tools)
-        sumariza()  # Chama a função para sumarizar após a verificação
-        messagebox.showinfo("Análise Concluída", "A análise foi concluída com sucesso!")
+        def perform_github_analysis(repo_url):
+            if not selected_sast_tools and not selected_sca_tools:
+                messagebox.showwarning("Ferramentas Não Selecionadas", "Por favor, selecione pelo menos uma ferramenta SAST ou SCA antes de iniciar a análise.")
+                return
+            else:
+                installed_tools = check_installed_tools()
+                required_tools = ["bandit", "safety", "semgrep", "npm", "snyk"]
+                missing_tools = [tool for tool in required_tools if tool not in installed_tools]
+
+                if missing_tools:
+                    missing_tools_str = ", ".join(missing_tools)
+                    messagebox.showwarning("Ferramentas Ausentes", f"As seguintes ferramentas estão ausentes: {missing_tools_str}. Por favor, instale-as primeiro.")
+                    return
+
+            if repo_url:
+                analysis_window = tk.Toplevel()
+                analysis_window.title("Análise em Andamento")
+                analysis_label = ttk.Label(analysis_window, text="Análise em andamento...")
+                analysis_label.pack()
+
+                scan_github(repo_url, selected_sast_tools, selected_sca_tools)
+                sumariza()  # Chama a função para sumarizar após a verificação
+
+                analysis_window.destroy()
+                messagebox.showinfo("Análise Concluída", "A análise foi concluída com sucesso!")
+                github_window.destroy()
+            else:
+                messagebox.showwarning("URL Vazia", "Por favor, insira a URL do repositório GitHub.")
+
+        github_window = tk.Toplevel()
+        github_window.title("Análise de Repositório GitHub")
+
+        github_label = ttk.Label(github_window, text="Insira a URL do repositório GitHub:")
+        github_label.pack()
+
+        github_entry = ttk.Entry(github_window, width=50)
+        github_entry.pack()
+
+        perform_github_button = ttk.Button(github_window, text="Analisar Repositório", command=lambda: perform_github_analysis(github_entry.get()))
+        perform_github_button.pack()
+
+
+
     install_button = ttk.Button(root, text="Instalar Ferramentas de Segurança", command=start_installation)
     install_button.pack(pady=5)
     scan_local_button = ttk.Button(root, text="Escanear Pasta Local", command=scan_local_with_tools)
