@@ -1,8 +1,6 @@
-# Hackathon-Connor-Time-7
+# CodeSecure Connor
 
-Aplicação: CodeSecure Connor
-
-Inicialmente, focada em análise de códigos e aplicações escritas em linguagem Python.
+Protótipo de aplicação de sumarização em análise de códigos escritos em linguagem Python e outras linguagens.
 
 Instalação automatizada das ferramentas de segurança:
 SAST: Bandit e Semgrep;
